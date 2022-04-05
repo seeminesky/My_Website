@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <style>
+        #map {
+            width: 1182px;
+            height: 589px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_GoogleMaps_0');
+        map.getPane('pane_GoogleMaps_0').style.zIndex = 400;
+        var layer_GoogleMaps_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleMaps_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleMaps_0;
+        map.addLayer(layer_GoogleMaps_0);
+        map.createPane('pane_NDVI_1');
+        map.getPane('pane_NDVI_1').style.zIndex = 401;
+        var img_NDVI_1 = 'data/NDVI_1.png';
+        var img_bounds_NDVI_1 = [[13.647744785514245,99.82914870350355],[14.210718974071948,100.33741549125837]];
+        var layer_NDVI_1 = new L.imageOverlay(img_NDVI_1,
+                                              img_bounds_NDVI_1,
+                                              {pane: 'pane_NDVI_1'});
+        bounds_group.addLayer(layer_NDVI_1);
+        map.addLayer(layer_NDVI_1);
+        map.createPane('pane_SAVI_2');
+        map.getPane('pane_SAVI_2').style.zIndex = 402;
+        var img_SAVI_2 = 'data/SAVI_2.png';
+        var img_bounds_SAVI_2 = [[13.647744785514245,99.82914870350355],[14.210718974071948,100.33741549125837]];
+        var layer_SAVI_2 = new L.imageOverlay(img_SAVI_2,
+                                              img_bounds_SAVI_2,
+                                              {pane: 'pane_SAVI_2'});
+        bounds_group.addLayer(layer_SAVI_2);
+        map.addLayer(layer_SAVI_2);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{"SAVI": layer_SAVI_2,"NDVI": layer_NDVI_1,"Google Maps": layer_GoogleMaps_0,}).addTo(map);
+        setBounds();
+        L.ImageOverlay.include({
+            getBounds: function () {
+                return this._bounds;
+            }
+        });
+        </script>
+    </body>
+</html>
